@@ -1,7 +1,7 @@
 <application>
   <component name="GithubSettings">
     <option name="LOGIN" value="727320580" />
-    <option name="HOST" value="https://github.com/727320580/meishi930115.git" />
+    <option name="HOST" value="https://github.com/" />
     <option name="AUTH_TYPE" value="BASIC" />
     <option name="PRIVATE_GIST" value="false" />
   </component>
