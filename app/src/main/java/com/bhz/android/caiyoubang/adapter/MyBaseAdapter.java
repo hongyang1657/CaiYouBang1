@@ -2,6 +2,8 @@ package com.bhz.android.caiyoubang.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -21,12 +23,12 @@ import com.bhz.android.caiyoubang.activity.CreateMenuActivity;
 import com.bhz.android.caiyoubang.info.CreateMenuStepInfo;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.support.v4.app.ActivityCompat.startActivity;
-import static android.support.v4.app.ActivityCompat.startActivityForResult;
 
 
 /**
@@ -56,7 +58,7 @@ public class MyBaseAdapter extends BaseAdapter{
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return list.get(position);
     }
 
     @Override
@@ -65,7 +67,7 @@ public class MyBaseAdapter extends BaseAdapter{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         //stepInfo = (MenuStepInfo) getItem(position);
         if (convertView==null){
             holder = new ViewHolder();
@@ -79,8 +81,17 @@ public class MyBaseAdapter extends BaseAdapter{
         holder = (ViewHolder) convertView.getTag();
         i = position+1;
         holder.tvStepNumber.setText(""+i);//设置步骤数目
-        holder.imageStep.setOnClickListener(listener);
         String stepContent = holder.etStepContent.getText().toString();
+        Log.i("result", "onClick: -------"+stepContent);
+        holder.imageStep.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(context, "",Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+
         return convertView;
     }
 
@@ -96,31 +107,5 @@ public class MyBaseAdapter extends BaseAdapter{
         public ImageView imageStep;
         public EditText etStepContent;
         public Button btSaveAndSend;//点击获取每个edittext中的字符
-    }
-    View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Toast.makeText(context, "--"+i, Toast.LENGTH_SHORT).show();
-            savePhotoAndIntent();//跳转相册，储存照片
-        }
-    };
-
-    public void savePhotoAndIntent(){
-        File userMenuImage = new File(Environment.getExternalStorageDirectory(),"user_menu_image.jpg");
-        if (userMenuImage.exists()){
-            userMenuImage.delete();
-        }
-        try {
-            userMenuImage.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        imageUri = Uri.fromFile(userMenuImage);
-        Intent intent = new Intent("android.intent.action. GET_CONTENT");
-        intent.setType("image/*");
-        intent.putExtra("crop", true);
-        intent.putExtra("scale", true);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        startActivity(null,intent,null);
     }
 }
