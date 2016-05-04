@@ -1,5 +1,6 @@
 package com.bhz.android.caiyoubang.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.support.v4.app.ActivityCompat.startActivity;
+import static android.support.v4.app.ActivityCompat.startActivityForResult;
 
 
 /**
@@ -87,6 +89,7 @@ public class MyBaseAdapter extends BaseAdapter{
             @Override
             public void onClick(View v) {
                 Toast.makeText(context, "",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
             }
         });
