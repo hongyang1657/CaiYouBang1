@@ -23,23 +23,24 @@ import java.util.List;
 public class MenuBaseAdapter extends BaseAdapter{
     Context context;
     LayoutInflater inflater;
-    List<MenuStepInfo> stepInfos;
+    String[] imgList;
+    String[] stepList;
 
-
-    public MenuBaseAdapter(Context context,List<MenuStepInfo> stepInfos) {
+    public MenuBaseAdapter(Context context,String[] imgList,String[] stepList) {
         this.context = context;
         inflater = LayoutInflater.from(context);
-        this.stepInfos = stepInfos;
+        this.imgList = imgList;
+        this.stepList = stepList;
     }
 
     @Override
     public int getCount() {
-        return stepInfos==null?0:stepInfos.size();
+        return stepList.length;
     }
 
     @Override
     public Object getItem(int position) {
-        return stepInfos.get(position);
+        return stepList[position];
     }
 
     @Override
@@ -59,26 +60,17 @@ public class MenuBaseAdapter extends BaseAdapter{
             convertView.setTag(holder);
         }
         holder = (ViewHolder) convertView.getTag();
-        MenuStepInfo info = stepInfos.get(position);
-        int number = position+1;
-        holder.stepNumber.setText(""+number);
-        holder.stepText.setText(info.getStepText());
-        Picasso.with(context).load(info.getStepImage()).into(holder.stepImage);
+        holder.stepNumber.setText(""+(position+1));
+        holder.stepText.setText(stepList[position]);
+
+        Picasso.with(context).load(imgList[position].replaceAll("\\]|\"|\\[|\\\\","")).into(holder.stepImage);
         return convertView;
     }
 
-    public void addStepInfos(List<MenuStepInfo> stepInfos){
-        if (this.stepInfos==null){
-            this.stepInfos = new ArrayList<MenuStepInfo>();
-        }
-        this.stepInfos = stepInfos;
-        notifyDataSetChanged();
-    }
-
     class ViewHolder{
-        private TextView stepNumber;
-        private ImageView stepImage;
-        private TextView stepText;
+        TextView stepNumber;
+        ImageView stepImage;
+        TextView stepText;
     }
 
 }
