@@ -2,10 +2,17 @@ package com.bhz.android.caiyoubang.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.bhz.android.caiyoubang.R;
+import com.bhz.android.caiyoubang.adapter.MenuClassifyAdapter;
+import com.bhz.android.caiyoubang.adapter.MenuClassifyContentAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,9 +30,24 @@ import okhttp3.Response;
  * Created by Administrator on 2016/5/7.
  */
 public class ClassifyActivity extends Activity{
+    String[] menuNameList;//分类菜谱名
+    String[] menuIdList;//分类菜谱id
+
     ListView lvClassify;//菜谱分类标签
     ListView lvContent;//标签具体内容
     String url = "http://apis.juhe.cn/cook/category?parentid=&dtype=&key=d94c0e7caf770bceaca6362dc3d35150";
+    MenuClassifyAdapter adapterFirst;
+    MenuClassifyContentAdapter adapterSecond;
+    JSONArray list;
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            adapterSecond.dataChange(menuNameList,menuIdList,list==null?10:list.length());
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,10 +55,19 @@ public class ClassifyActivity extends Activity{
         init();
     }
     private void init(){
+        //一级adapter
         lvClassify = (ListView) findViewById(R.id.list_classify);
-        lvContent = (ListView) findViewById(R.id.list_classify_content);
+        adapterFirst = new MenuClassifyAdapter(this);
+        lvClassify.setAdapter(adapterFirst);
+        //二级adapter
+        lvContent = (ListView) findViewById(R.id.grid_classify_content);
+        adapterSecond = new MenuClassifyContentAdapter(this);
+        lvContent.setAdapter(adapterSecond);
+
+        lvClassify.setOnItemClickListener(listenerOne);//一级分类item点击事件
     }
-    private void doJson(){
+
+    private void doJson(final int position){
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
         Call call = client.newCall(request);
@@ -51,11 +82,34 @@ public class ClassifyActivity extends Activity{
                 try {
                     JSONObject jsonObject = new JSONObject(response.body().string());
                     JSONArray jsonArray = jsonObject.getJSONArray("result");
-                    int i = jsonArray.length();
+                    JSONObject obj = jsonArray.getJSONObject(position);//获取点击项的object
+                    list = obj.getJSONArray("list");
+                    for (int i=0;i<list.length();i++){
+                        JSONObject classify = list.getJSONObject(i);
+                        menuNameList = new String[list.length()];
+                        menuIdList = new String[list.length()];
+                        menuNameList[i] = classify.getString("name");
+                        menuIdList[i] = classify.getString("id");
+                        Log.i("result", "onResponse:------ "+classify.toString());
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
     }
+
+    //一级分类item点击事件
+    AdapterView.OnItemClickListener listenerOne = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            doJson(position);
+            adapterFirst.changeSelected(position);//改变背景色
+            handler.sendEmptyMessage(10);
+
+        }
+    };
+
+
+
 }

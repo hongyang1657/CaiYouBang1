@@ -34,6 +34,7 @@ import static android.support.v4.app.ActivityCompat.startActivityForResult;
 
 
 /**
+ *
  * Created by Administrator on 2016/4/13.
  */
 public class MyBaseAdapter extends BaseAdapter{
