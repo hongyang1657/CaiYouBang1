@@ -35,14 +35,13 @@
                 android:text="菜友帮"
                 android:textSize="30sp" />
 
-            <EditText
+            <Button
                 android:id="@+id/mainpage_home_search"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:background="@null"
                 android:drawableRight="@mipmap/search"
-                android:hint="请输入搜索内容"
                 android:textSize="10sp" />
         </RelativeLayout>
 

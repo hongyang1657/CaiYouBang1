@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,27 +19,40 @@ import android.widget.Gallery;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.bhz.android.caiyoubang.R;
 import com.bhz.android.caiyoubang.activity.DemoMenuActivity;
 import com.bhz.android.caiyoubang.activity.EventForMoreActivity;
-import com.bhz.android.caiyoubang.activity.TestActivity;
 import com.bhz.android.caiyoubang.adapter.EventSummaryAdapter;
 import com.bhz.android.caiyoubang.adapter.TitleAdapter;
 import com.bhz.android.caiyoubang.data.EventSummary;
+import com.bhz.android.caiyoubang.utils.RunningTime;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by Administrator on 2016/4/19.
  */
 public class HomeFragment extends Fragment {
+    RunningTime runningTime = new RunningTime();
     //系统设定按钮
     TextView tv_systemseting;
     //搜索栏
-    EditText ed_forsearch;
+    Button btn_forsearch;
     //标题banner
     Gallery gallery_title;
     //活动banner
@@ -70,7 +84,17 @@ public class HomeFragment extends Fragment {
     List<EventSummary> list;
     List<EventSummary> randomlist;
     List<EventSummary> fulleventlist;
+    Intent intent;
+    Context context;
 
+    int MENU_CID_CHUANCAI = 10;//川菜
+    int MENU_CID_YUECAI = 11;//粤菜
+    int MENU_CID_XIANGCAI = 12;//湘菜
+    int MENU_CID_LUCAI = 13;//鲁菜
+    int MENU_CID_MINCAI = 101;//闽菜
+    int MENU_CID_ZHECAI = 102;//浙菜
+    int MENU_CID_SUCAI = 104;//苏菜
+    int MENU_CID_HUICAI = 105;//徽菜
 
 
     @Override
@@ -88,7 +112,7 @@ public class HomeFragment extends Fragment {
         group_title = (RadioGroup) view.findViewById(R.id.mainpage_home_gallerychoose);
         gallery_title = (Gallery) view.findViewById(R.id.mainpage_home_gallery);
         gallery_event = (Gallery) view.findViewById(R.id.mainpage_home_eventgallery);
-        ed_forsearch = (EditText) view.findViewById(R.id.mainpage_home_search);
+        btn_forsearch = (Button) view.findViewById(R.id.mainpage_home_search);
         gallery_hot = (Gallery) view.findViewById(R.id.mainpage_home_recipegallery);
         btn_eventformore = (Button) view.findViewById(R.id.mainpage_home_moreevent);
         btn_hotformore = (Button) view.findViewById(R.id.mainpage_home_recipe);
@@ -108,8 +132,16 @@ public class HomeFragment extends Fragment {
         gallery_title.setOnItemSelectedListener(titleselect);
         group_title.setOnCheckedChangeListener(titlegroupchoose);
         btn_eventformore.setOnClickListener(eventformore);
+        btn_forsearch.setOnClickListener(search);
     }
 
+
+    View.OnClickListener search=new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
     View.OnClickListener eventformore =new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -194,34 +226,87 @@ public class HomeFragment extends Fragment {
         return resID;
     }
 
+    //穿入点击的菜谱分类（川菜，粤菜等），获取json数据，解析
+    public void getdataFromNet(final int menuId){
+
+        intent = new Intent(homepage,DemoMenuActivity.class);
+        //按标签检索菜谱的url   cid表示标签id     format表示是否返回步骤steps字段      rn表示返回数据条数，默认10条
+        String url = "http://apis.juhe.cn/cook/index?cid="+menuId+"&dtype=&pn=&rn=&format=1&key=418bc6e82cd8480c3acae6abeba5f2c5";
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(url).build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Toast.makeText(context, "网络获取失败", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String[] nameList;//菜谱名数组
+                String[] imageUrlList;//菜谱图片url数组
+                String[] ingredientsList;//菜谱用料数组
+                try {
+                    JSONObject jsonObject = new JSONObject(response.body().string());
+                    JSONObject result = jsonObject.getJSONObject("result");
+                    JSONArray data = result.getJSONArray("data");
+                    nameList = new String[data.length()];
+                    imageUrlList = new String[data.length()];
+                    ingredientsList = new String[data.length()];
+                    for (int i=0;i<data.length();i++){
+                        JSONObject obj = data.getJSONObject(i);
+                        String name = obj.getString("title");//获取菜谱名字
+                        String content = obj.getString("ingredients");//获取菜谱用料
+                        String image = obj.getString("albums");//获取菜谱图片
+                        image = image.replaceAll("\\]|\"|\\[|\\\\","");//去掉图片uri中的多余字符
+                        nameList[i] = name;
+                        imageUrlList[i] = image;
+                        ingredientsList[i] = content;
+                    }
+                    intent.putExtra("name",nameList);
+                    intent.putExtra("image",imageUrlList);
+                    intent.putExtra("content",ingredientsList);
+                    intent.putExtra("menuId",menuId);
+                    intent.putExtra("CDKEY",1);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                runningTime.progressDialog.dismiss();
+                startActivity(intent);
+            }
+        });
+    }
+
     //菜系按钮点击事件
     View.OnClickListener caixi = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            runningTime.runningTimeProgressDialog(homepage);
             switch (v.getId()) {
                 case R.id.button_chuan:
-                    newIntent("chuan");
+                    getdataFromNet(MENU_CID_CHUANCAI);
                     break;
                 case R.id.button_lu:
-                    newIntent("lu");
+                    getdataFromNet(MENU_CID_LUCAI);
                     break;
                 case R.id.button_yue:
-                    newIntent("yue");
+                    getdataFromNet(MENU_CID_YUECAI);
                     break;
                 case R.id.button_su:
-                    newIntent("su");
+                    getdataFromNet(MENU_CID_SUCAI);
                     break;
                 case R.id.button_zhe:
-                    newIntent("zhe");
+                    getdataFromNet(MENU_CID_ZHECAI);
                     break;
                 case R.id.button_min:
-                    newIntent("min");
+                    getdataFromNet(MENU_CID_MINCAI);
                     break;
                 case R.id.button_xiang:
-                    newIntent("xiang");
+                    getdataFromNet(MENU_CID_XIANGCAI);
                     break;
                 case R.id.button_hui:
-                    newIntent("hui");
+                    getdataFromNet(MENU_CID_HUICAI);
                     break;
             }
         }
@@ -241,12 +326,6 @@ public class HomeFragment extends Fragment {
         }
     };
 
-    //菜系跳转事件
-    private void newIntent(String s) {
-        Intent intent = new Intent(homepage, DemoMenuActivity.class);
-        intent.putExtra("caixi", s);
-        startActivity(intent);
-    }
 
     //标题的gallery控制radiobutton的选择
     AdapterView.OnItemSelectedListener titleselect = new AdapterView.OnItemSelectedListener() {
