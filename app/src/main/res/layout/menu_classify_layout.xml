@@ -11,11 +11,10 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content">
     </ListView>
-    <ListView
-        android:scrollbars="none"
-        android:background="@color/colorLightGray"
-        android:id="@+id/grid_classify_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </ListView>
+    <fragment
+        android:id="@+id/right_fragment"
+        android:name="com.bhz.android.caiyoubang.fragment.ClassifyFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 </LinearLayout>

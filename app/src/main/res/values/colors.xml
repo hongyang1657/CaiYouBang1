@@ -9,5 +9,8 @@
     <color name="colorYellow">#FFFF00</color>
     <color name="colorGraiysh">#B3B3B3</color>
     <color name="colorLightGray">#BFBFBF</color>
+    <color name="colorBlack">#000000</color>
     <color name="colorCroci">#FEE9B4</color>
+    <color name="colorBlackOne">#333333</color>
+    <color name="colorCrociOne">#F39E68</color>
 </resources>

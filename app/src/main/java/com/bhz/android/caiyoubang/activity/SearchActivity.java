@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bhz.android.caiyoubang.R;
+import com.bhz.android.caiyoubang.utils.RunningTime;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,16 +31,12 @@ import okhttp3.Response;
  * Created by Administrator on 2016/5/7.
  */
 public class SearchActivity extends Activity{
+    RunningTime runningTime = new RunningTime();
     AutoCompleteTextView autoCompleteTextView;
     ImageView ivBack;
     Button btSearch;
 
     String searchText;//搜索框中输入的内容转化的URL编码
-    String MenuName;
-    String MenuAbstract;
-    String MenuStuff;
-    String MenuTips;
-    String MenuimageHead;
     Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +53,7 @@ public class SearchActivity extends Activity{
     }
     private void getJson(){
         intent = new Intent(SearchActivity.this,DemoMenuActivity.class);
-        String url = "http://apis.juhe.cn/cook/query.php?menu="+searchText+"&dtype=&pn=&rn=&albums=&=&key=d94c0e7caf770bceaca6362dc3d35150";
+        String url = "http://apis.juhe.cn/cook/query.php?menu="+searchText+"&dtype=&pn=&rn=&albums=&=&key=418bc6e82cd8480c3acae6abeba5f2c5";
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
         Call call = client.newCall(request);
@@ -96,6 +93,7 @@ public class SearchActivity extends Activity{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                runningTime.progressDialog.dismiss();
                 startActivity(intent);
             }
         });
@@ -110,6 +108,7 @@ public class SearchActivity extends Activity{
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
+            runningTime.runningTimeProgressDialog(SearchActivity.this);
             getJson();
         }
     };

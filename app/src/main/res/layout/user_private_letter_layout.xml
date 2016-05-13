@@ -7,12 +7,12 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorGraiysh"
+        android:background="@color/colorCroci"
         android:orientation="horizontal"
         android:padding="10dp">
 
         <Button
-            android:id="@+id/btn_user_edit_data_back"
+            android:id="@+id/btn_user_private_back"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_gravity="center_vertical"
@@ -21,17 +21,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/btn_user_edit_data_back"
-            android:paddingLeft="10dp"
-            android:text="信息"
-            android:textSize="30sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/btn_user_private_back"
             android:layout_alignParentRight="true"
-            android:text="忽略全部"
-            android:textSize="30sp" />
+            android:layout_alignTop="@id/btn_user_private_back"
+            android:gravity="center_vertical"
+            android:text="朕已阅"
+            android:textSize="20sp" />
 
     </RelativeLayout>
 
@@ -41,22 +36,28 @@
         android:padding="10dp">
 
         <TextView
+            android:id="@+id/tv_user_private_prise"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawableLeft="@mipmap/information_praise"
+            android:drawablePadding="15dp"
+            android:gravity="center_vertical"
             android:text="收到的赞"
-            android:textSize="25sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/tv_user_private_prise"
+            android:layout_alignBottom="@id/tv_user_private_prise"
             android:drawableRight="@mipmap/dish_made_arrow" />
     </RelativeLayout>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorBlcak" />
+        android:background="@color/colorBlackOne" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -64,25 +65,31 @@
         android:padding="10dp">
 
         <TextView
+            android:id="@+id/tv_user_private_attention"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawableLeft="@mipmap/information_atention"
+            android:drawablePadding="15dp"
+            android:gravity="center_vertical"
             android:text="关注"
-            android:textSize="25sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/tv_user_private_attention"
             android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/tv_user_private_attention"
             android:drawableRight="@mipmap/dish_made_arrow" />
     </RelativeLayout>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/colorBlcak" />
+        android:background="@color/colorBlack" />
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

@@ -33,7 +33,7 @@ public class MenuDemoAdapter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        return nameList.length;
+        return nameList==null?0:nameList.length;
     }
 
     @Override

@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.bhz.android.caiyoubang.R;
 import com.bhz.android.caiyoubang.adapter.MenuClassifyAdapter;
 import com.bhz.android.caiyoubang.adapter.MenuClassifyContentAdapter;
+import com.bhz.android.caiyoubang.utils.RunningTime;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,12 +31,13 @@ import okhttp3.Response;
  * Created by Administrator on 2016/5/7.
  */
 public class ClassifyActivity extends Activity{
+    RunningTime runningTime = new RunningTime();
     String[] menuNameList;//分类菜谱名
     String[] menuIdList;//分类菜谱id
 
     ListView lvClassify;//菜谱分类标签
-    ListView lvContent;//标签具体内容
-    String url = "http://apis.juhe.cn/cook/category?parentid=&dtype=&key=d94c0e7caf770bceaca6362dc3d35150";
+    //ListView lvContent;//标签具体内容
+    String url = "http://apis.juhe.cn/cook/category?parentid=&dtype=&key=418bc6e82cd8480c3acae6abeba5f2c5";
     MenuClassifyAdapter adapterFirst;
     MenuClassifyContentAdapter adapterSecond;
     JSONArray list;
@@ -60,11 +62,11 @@ public class ClassifyActivity extends Activity{
         adapterFirst = new MenuClassifyAdapter(this);
         lvClassify.setAdapter(adapterFirst);
         //二级adapter
-        lvContent = (ListView) findViewById(R.id.grid_classify_content);
+        /*lvContent = (ListView) findViewById(R.id.grid_classify_content);
         adapterSecond = new MenuClassifyContentAdapter(this);
         lvContent.setAdapter(adapterSecond);
 
-        lvClassify.setOnItemClickListener(listenerOne);//一级分类item点击事件
+        lvClassify.setOnItemClickListener(listenerOne);//一级分类item点击事件*/
     }
 
     private void doJson(final int position){
@@ -95,6 +97,7 @@ public class ClassifyActivity extends Activity{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                runningTime.progressDialog.dismiss();
             }
         });
     }
@@ -103,6 +106,7 @@ public class ClassifyActivity extends Activity{
     AdapterView.OnItemClickListener listenerOne = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            runningTime.runningTimeProgressDialog(ClassifyActivity.this);
             doJson(position);
             adapterFirst.changeSelected(position);//改变背景色
             handler.sendEmptyMessage(10);

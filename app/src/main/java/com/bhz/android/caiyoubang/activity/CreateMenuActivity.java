@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bhz.android.caiyoubang.R;
-import com.bhz.android.caiyoubang.adapter.MyBaseAdapter;
+import com.bhz.android.caiyoubang.adapter.HyBaseAdapter;
 import com.bhz.android.caiyoubang.db.MyDbHelper;
 import com.bhz.android.caiyoubang.info.CreateMenuStepInfo;
 import com.bhz.android.caiyoubang.view.ScrollListView;
@@ -39,7 +39,7 @@ public class CreateMenuActivity extends Activity{
     ImageView imageView;
     Button btAddStep;
     Button btSend;
-    MyBaseAdapter adapter;
+    HyBaseAdapter adapter;
     int addCaipuNumber = 2;
     Uri imageUri;
     Uri imageUri1;
@@ -63,7 +63,7 @@ public class CreateMenuActivity extends Activity{
         btAddStep = (Button) findViewById(R.id.bt_addstep);
         btSend = (Button) findViewById(R.id.bt_send);
         //menuInfoList = new ArrayList<>();
-        adapter = new MyBaseAdapter(this,menuInfoList);
+        adapter = new HyBaseAdapter(this,menuInfoList);
         listView.setAdapter(adapter);
 
     }
@@ -185,6 +185,7 @@ public class CreateMenuActivity extends Activity{
                 break;
             case R.id.bt_send:
                 //getItemContent();
+
                 dbHelper.getWritableDatabase();
                 addDataToSQLite();
                 Intent intent = new Intent(this,MenuActivity.class);

@@ -1,88 +1,134 @@
 package com.bhz.android.caiyoubang;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.view.Window;
+import android.widget.RadioGroup;
 
-import java.io.IOException;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import com.bhz.android.caiyoubang.activity.GuideActivity;
+import com.bhz.android.caiyoubang.fragment.DiscoveryFragment;
+import com.bhz.android.caiyoubang.fragment.HomeFragment;
+import com.bhz.android.caiyoubang.fragment.MyFragment;
+import com.bhz.android.caiyoubang.fragment.MyLogoutFragment;
+import com.bhz.android.caiyoubang.fragment.ShareFragment;
 
-public class MainActivity extends AppCompatActivity {
-    int PHOTO_REQUEST_GALLERY = 1;
-    int PHOTO_REQUEST_CUT = 2;
-    ImageView imageView;
-    Bitmap bitmap;
+import java.util.List;
+
+public class MainActivity extends Activity{//利用借口实现和fragment的数据互通
+    FragmentManager fragmentManager;
+    FragmentTransaction transaction;
+    RadioGroup group_mainpage;
+    int loginjudge=0;
+    //判断是否第一次进入程序以及是否打开引导页
+    SharedPreferences sp;
+    MyFragment myfragment;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
-        Button button = (Button) findViewById(R.id.btttt);
-        imageView = (ImageView) findViewById(R.id.imaaaa);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                gallery();
-            }
-        });
-    }
-    public void gallery() {
-        // 激活系统图库，选择一张图片
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_GALLERY
-        startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
+        //判断是否需要进入引导页
+        sp=getSharedPreferences("app", Context.MODE_PRIVATE);  //获取SHaredPreferences服务
+        whethertoguidepage();
+        //初始化
+        inti();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PHOTO_REQUEST_GALLERY) {
-            // 从相册返回的数据
-            if (data != null) {
-                // 得到图片的全路径
-                Uri uri = data.getData();
-                crop(uri);
-            }else if (requestCode == PHOTO_REQUEST_CUT) {
-                // 从剪切图片返回的数据
-                if (data != null) {
-                    bitmap = data.getParcelableExtra("data");
-                    imageView.setImageBitmap(bitmap);
-                }
-
-
-            }
-
+    private void whethertoguidepage() {
+        if(sp.getBoolean("firstlogin",true)){  //通过SharedPreferences判断是否第一次进入app
+            Intent intent=new Intent(this,GuideActivity.class);
+            startActivity(intent);
+            finish();
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void crop(Uri uri) {
-        // 裁剪图片意图
-        Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri, "image/*");
-        intent.putExtra("crop", "true");
-        // 裁剪框的比例，1：1
-        intent.putExtra("aspectX", 1);
-        intent.putExtra("aspectY", 1);
-        // 裁剪后输出图片的尺寸大小
-        intent.putExtra("outputX", 250);
-        intent.putExtra("outputY", 250);
-
-        intent.putExtra("outputFormat", "JPEG");// 图片格式
-        intent.putExtra("noFaceDetection", true);// 取消人脸识别
-        intent.putExtra("return-data", true);
-        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_CUT
-        startActivityForResult(intent, PHOTO_REQUEST_CUT);
+    private void setDefaultFragment() {  //设置默认页面
+        transaction = fragmentManager.beginTransaction();
+        Fragment homefrag = new HomeFragment();
+        transaction.replace(R.id.mainpage_main_fragment, homefrag);
+        transaction.commit();
     }
+
+    private void inti() {
+        fragmentManager = getFragmentManager();
+        setDefaultFragment();
+        group_mainpage = (RadioGroup) findViewById(R.id.mainpage_menu_group);
+        group_mainpage.setOnCheckedChangeListener(onchecked);
+    }
+
+
+
+    RadioGroup.OnCheckedChangeListener onchecked = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup radioGroup, int i) {
+            switch (i) {
+                case R.id.mainpage_menu_home:
+                    setfragment(1);
+                    break;
+                case R.id.mainpage_menu_share:
+                    setfragment(2);
+                    break;
+                case R.id.mainpage_menu_discover:
+                    setfragment(3);
+                    break;
+                case R.id.mainpage_menu_my:
+                    if(loginjudge==0){
+                        setfragment(4);  //为了调试直接调出登录页面，需改回
+                    }else {
+                        setfragment(4);
+                    }
+                    break;
+            }
+        }
+    };
+//设定显示内容
+    private void setfragment(int s) {
+        switch (s) {
+            case 1:
+                    Fragment homefragment = new HomeFragment();
+                    transaction = fragmentManager.beginTransaction();
+                    transaction.replace(R.id.mainpage_main_fragment, homefragment);
+                    transaction.commit();
+                break;
+            case 2:
+                    transaction = fragmentManager.beginTransaction();
+                    Fragment sharefragment = new ShareFragment();
+                    transaction.replace(R.id.mainpage_main_fragment, sharefragment);
+                    transaction.commit();
+                break;
+            case 3:
+                    transaction = fragmentManager.beginTransaction();
+                    Fragment discoveryfragment = new DiscoveryFragment();
+                    transaction.replace(R.id.mainpage_main_fragment, discoveryfragment);
+                    transaction.commit();
+                break;
+            case 4:
+                    transaction = fragmentManager.beginTransaction();
+                    Fragment myfragment = new MyFragment();
+                    transaction.replace(R.id.mainpage_main_fragment,myfragment,"myfragment");
+                transaction.commit();
+                Fragment fragment=fragmentManager.findFragmentByTag("myfragment");
+                Log.i("TA", (fragment==null)+"");
+
+            break;
+            case 5:
+                transaction=fragmentManager.beginTransaction();
+                Fragment nonloginfragment=new MyLogoutFragment();
+                transaction.replace(R.id.mainpage_main_fragment,nonloginfragment);
+                transaction.commit();
+        }
+    }
+
+
 }

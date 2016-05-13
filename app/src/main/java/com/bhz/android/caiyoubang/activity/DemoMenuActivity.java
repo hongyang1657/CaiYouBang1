@@ -1,6 +1,7 @@
 package com.bhz.android.caiyoubang.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 
 import com.bhz.android.caiyoubang.R;
 import com.bhz.android.caiyoubang.adapter.MenuDemoAdapter;
+import com.bhz.android.caiyoubang.utils.RunningTime;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,9 +28,10 @@ import okhttp3.Response;
 
 /**
  * 各种菜谱列表activity
- * Created by Administrator on 2016/5/3.
+ * Created by Administrator on 2016/5/3
  */
 public class DemoMenuActivity extends Activity{
+    RunningTime runningTime = new RunningTime();
     String[] nameList;//获取的菜谱名字
     String[] imageUrlList;//获取的菜谱主图片
     String[] ingredientsList;//获取的菜谱配料
@@ -73,15 +76,16 @@ public class DemoMenuActivity extends Activity{
     AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            runningTime.runningTimeProgressDialog(DemoMenuActivity.this);
             getOkhttpData(position);
         }
     };
     public void getOkhttpData(final int position){
         intent = new Intent(DemoMenuActivity.this,MenuActivity.class);
         if (CDKEY==1){
-            url = "http://apis.juhe.cn/cook/index?cid="+menuId+"&dtype=&pn=&rn=&format=1&key=d94c0e7caf770bceaca6362dc3d35150";
+            url = "http://apis.juhe.cn/cook/index?cid="+menuId+"&dtype=&pn=&rn=&format=1&key=418bc6e82cd8480c3acae6abeba5f2c5";
         }else if (CDKEY==2){
-            url = "http://apis.juhe.cn/cook/query.php?menu="+searchText+"&dtype=&pn=&rn=&albums=&=&key=d94c0e7caf770bceaca6362dc3d35150";
+            url = "http://apis.juhe.cn/cook/query.php?menu="+searchText+"&dtype=&pn=&rn=&albums=&=&key=418bc6e82cd8480c3acae6abeba5f2c5";
         }
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
@@ -127,6 +131,7 @@ public class DemoMenuActivity extends Activity{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                runningTime.progressDialog.dismiss();
                 startActivity(intent);
             }
         });

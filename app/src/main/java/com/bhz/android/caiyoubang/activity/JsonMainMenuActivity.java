@@ -1,6 +1,7 @@
 package com.bhz.android.caiyoubang.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.bhz.android.caiyoubang.R;
 import com.bhz.android.caiyoubang.adapter.MenuDemoAdapter;
 import com.bhz.android.caiyoubang.info.MenuInfo;
+import com.bhz.android.caiyoubang.utils.RunningTime;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,6 +33,7 @@ import okhttp3.Response;
  * Created by Administrator on 2016/5/3.
  */
 public class JsonMainMenuActivity extends Activity{
+    RunningTime runningTime = new RunningTime();
     int MENU_CID_CHUANCAI = 10;//川菜
     int MENU_CID_YUECAI = 11;//粤菜
     int MENU_CID_XIANGCAI = 12;//湘菜
@@ -71,7 +74,7 @@ public class JsonMainMenuActivity extends Activity{
 
         intent = new Intent(this,DemoMenuActivity.class);
         //按标签检索菜谱的url   cid表示标签id     format表示是否返回步骤steps字段      rn表示返回数据条数，默认10条
-        String url = "http://apis.juhe.cn/cook/index?cid="+menuId+"&dtype=&pn=&rn=&format=1&key=d94c0e7caf770bceaca6362dc3d35150";
+        String url = "http://apis.juhe.cn/cook/index?cid="+menuId+"&dtype=&pn=&rn=&format=1&key=418bc6e82cd8480c3acae6abeba5f2c5";
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
         Call call = client.newCall(request);
@@ -111,13 +114,17 @@ public class JsonMainMenuActivity extends Activity{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+                runningTime.progressDialog.dismiss();
                 startActivity(intent);
             }
         });
     }
 
+
     //获取不同菜系的数据
     public void getMoreMenu(View v){
+        runningTime.runningTimeProgressDialog(JsonMainMenuActivity.this);
         switch (v.getId()){
             case R.id.iv1:
                 getdataFromNet(MENU_CID_CHUANCAI);
