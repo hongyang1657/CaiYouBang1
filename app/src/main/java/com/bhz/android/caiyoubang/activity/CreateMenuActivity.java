@@ -43,9 +43,11 @@ public class CreateMenuActivity extends Activity{
     int addCaipuNumber = 2;
     Uri imageUri;
     Uri imageUri1;
+    Uri stepImageUri;
     MyDbHelper dbHelper;
     CreateMenuStepInfo stepInfo;
     List<CreateMenuStepInfo> menuInfoList;
+    ImageView ivBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +60,13 @@ public class CreateMenuActivity extends Activity{
 
     }
     private void init() {
+        ivBack = (ImageView) findViewById(R.id.iv_back);
         listView = (ScrollListView) findViewById(R.id.list_step);
         imageView = (ImageView) findViewById(R.id.image_head);
         btAddStep = (Button) findViewById(R.id.bt_addstep);
         btSend = (Button) findViewById(R.id.bt_send);
         //menuInfoList = new ArrayList<>();
-        adapter = new HyBaseAdapter(this,menuInfoList);
+        adapter = new HyBaseAdapter(this,this,menuInfoList,stepImageUri);
         listView.setAdapter(adapter);
 
     }
@@ -156,13 +159,25 @@ public class CreateMenuActivity extends Activity{
                 break;
             case 10:
                 if (resultCode == RESULT_OK) {
+                    Intent intent = new Intent("com.android.camera.action.CROP");
+                    intent.setDataAndType(stepImageUri, "image/*");
+                    intent.putExtra("scale", true);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, stepImageUri);
+                    startActivityForResult(intent,20); // 启动裁剪程序
+                    adapter.addInfo(stepInfo);
+                }
+                break;
+            case 20:
+                if (resultCode == RESULT_OK) {
                     try {
-                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri1));
-                        imageView.setImageBitmap(bitmap);
+                        Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(stepImageUri));
+
+                        imageView.setImageBitmap(bitmap); // 将裁剪后的照片显示出来
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
+                break;
             default:
                 break;
         }
@@ -193,6 +208,9 @@ public class CreateMenuActivity extends Activity{
                 break;
             case R.id.list_step:
                 Log.i("tag", "click: -------");
+                break;
+            case R.id.iv_back:
+                finish();
                 break;
         }
     }

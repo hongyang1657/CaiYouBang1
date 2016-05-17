@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.bhz.android.caiyoubang.R;
 import com.bhz.android.caiyoubang.activity.DemoMenuActivity;
 import com.bhz.android.caiyoubang.activity.EventForMoreActivity;
+import com.bhz.android.caiyoubang.activity.SearchActivity;
 import com.bhz.android.caiyoubang.adapter.EventSummaryAdapter;
 import com.bhz.android.caiyoubang.adapter.TitleAdapter;
 import com.bhz.android.caiyoubang.data.EventSummary;
@@ -136,10 +137,12 @@ public class HomeFragment extends Fragment {
     }
 
 
+    //跳转搜索界面
     View.OnClickListener search=new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            Intent intent = new Intent(homepage, SearchActivity.class);
+            startActivity(intent);
         }
     };
     View.OnClickListener eventformore =new View.OnClickListener() {
@@ -227,11 +230,12 @@ public class HomeFragment extends Fragment {
     }
 
     //穿入点击的菜谱分类（川菜，粤菜等），获取json数据，解析
-    public void getdataFromNet(final int menuId){
+    public void getdataFromNet(final int menuId, final int title){
 
         intent = new Intent(homepage,DemoMenuActivity.class);
         //按标签检索菜谱的url   cid表示标签id     format表示是否返回步骤steps字段      rn表示返回数据条数，默认10条
         String url = "http://apis.juhe.cn/cook/index?cid="+menuId+"&dtype=&pn=&rn=&format=1&key=418bc6e82cd8480c3acae6abeba5f2c5";
+        final String[] titleList = {"川菜","粤菜","湘菜","鲁菜","闽菜","浙菜","苏菜","徽菜"};
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
         Call call = client.newCall(request);
@@ -263,6 +267,7 @@ public class HomeFragment extends Fragment {
                         imageUrlList[i] = image;
                         ingredientsList[i] = content;
                     }
+                    intent.putExtra("title",titleList[title]);
                     intent.putExtra("name",nameList);
                     intent.putExtra("image",imageUrlList);
                     intent.putExtra("content",ingredientsList);
@@ -285,28 +290,28 @@ public class HomeFragment extends Fragment {
             runningTime.runningTimeProgressDialog(homepage);
             switch (v.getId()) {
                 case R.id.button_chuan:
-                    getdataFromNet(MENU_CID_CHUANCAI);
+                    getdataFromNet(MENU_CID_CHUANCAI,0);
                     break;
                 case R.id.button_lu:
-                    getdataFromNet(MENU_CID_LUCAI);
+                    getdataFromNet(MENU_CID_LUCAI,1);
                     break;
                 case R.id.button_yue:
-                    getdataFromNet(MENU_CID_YUECAI);
+                    getdataFromNet(MENU_CID_YUECAI,2);
                     break;
                 case R.id.button_su:
-                    getdataFromNet(MENU_CID_SUCAI);
+                    getdataFromNet(MENU_CID_SUCAI,3);
                     break;
                 case R.id.button_zhe:
-                    getdataFromNet(MENU_CID_ZHECAI);
+                    getdataFromNet(MENU_CID_ZHECAI,4);
                     break;
                 case R.id.button_min:
-                    getdataFromNet(MENU_CID_MINCAI);
+                    getdataFromNet(MENU_CID_MINCAI,5);
                     break;
                 case R.id.button_xiang:
-                    getdataFromNet(MENU_CID_XIANGCAI);
+                    getdataFromNet(MENU_CID_XIANGCAI,6);
                     break;
                 case R.id.button_hui:
-                    getdataFromNet(MENU_CID_HUICAI);
+                    getdataFromNet(MENU_CID_HUICAI,7);
                     break;
             }
         }

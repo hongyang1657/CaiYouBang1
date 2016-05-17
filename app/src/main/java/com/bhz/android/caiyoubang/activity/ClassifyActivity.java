@@ -36,18 +36,12 @@ public class ClassifyActivity extends Activity{
     String[] menuIdList;//分类菜谱id
 
     ListView lvClassify;//菜谱分类标签
-    //ListView lvContent;//标签具体内容
+    ListView lvContent;//标签具体内容
     String url = "http://apis.juhe.cn/cook/category?parentid=&dtype=&key=418bc6e82cd8480c3acae6abeba5f2c5";
     MenuClassifyAdapter adapterFirst;
     MenuClassifyContentAdapter adapterSecond;
     JSONArray list;
-    Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            adapterSecond.dataChange(menuNameList,menuIdList,list==null?10:list.length());
-        }
-    };
+    Handler handler = new Handler();
 
 
     @Override
@@ -61,12 +55,11 @@ public class ClassifyActivity extends Activity{
         lvClassify = (ListView) findViewById(R.id.list_classify);
         adapterFirst = new MenuClassifyAdapter(this);
         lvClassify.setAdapter(adapterFirst);
-        //二级adapter
-        /*lvContent = (ListView) findViewById(R.id.grid_classify_content);
-        adapterSecond = new MenuClassifyContentAdapter(this);
-        lvContent.setAdapter(adapterSecond);
+        lvClassify.setOnItemClickListener(listenerOne);//一级分类item点击事件
 
-        lvClassify.setOnItemClickListener(listenerOne);//一级分类item点击事件*/
+
+
+
     }
 
     private void doJson(final int position){
@@ -92,11 +85,21 @@ public class ClassifyActivity extends Activity{
                         menuIdList = new String[list.length()];
                         menuNameList[i] = classify.getString("name");
                         menuIdList[i] = classify.getString("id");
-                        Log.i("result", "onResponse:------ "+classify.toString());
+                        Log.i("result", "onResponse:------ "+menuNameList[i]);
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        lvContent = (ListView) findViewById(R.id.list_content);
+                        adapterSecond = new MenuClassifyContentAdapter(ClassifyActivity.this,menuNameList,menuIdList);
+                        lvContent.setAdapter(adapterSecond);
+                    }
+                });
+
                 runningTime.progressDialog.dismiss();
             }
         });
@@ -109,8 +112,6 @@ public class ClassifyActivity extends Activity{
             runningTime.runningTimeProgressDialog(ClassifyActivity.this);
             doJson(position);
             adapterFirst.changeSelected(position);//改变背景色
-            handler.sendEmptyMessage(10);
-
         }
     };
 

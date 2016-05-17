@@ -38,6 +38,7 @@ public class SearchActivity extends Activity{
 
     String searchText;//搜索框中输入的内容转化的URL编码
     Intent intent;
+    String text;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +51,7 @@ public class SearchActivity extends Activity{
         ivBack = (ImageView) findViewById(R.id.img_back);
         btSearch = (Button) findViewById(R.id.bt_search);
         btSearch.setOnClickListener(searchListener);//搜索按钮监听
+        ivBack.setOnClickListener(backToMain);
     }
     private void getJson(){
         intent = new Intent(SearchActivity.this,DemoMenuActivity.class);
@@ -90,6 +92,7 @@ public class SearchActivity extends Activity{
                     intent.putExtra("content",ingredientsList);
                     intent.putExtra("CDKEY",2);
                     intent.putExtra("searchText",searchText);
+                    intent.putExtra("title",text);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -104,7 +107,8 @@ public class SearchActivity extends Activity{
         public void onClick(View v) {
             //获取输入框内容，转化为UTF-8编码
             try {
-                searchText = URLEncoder.encode(autoCompleteTextView.getText().toString(),"UTF-8");
+                text = autoCompleteTextView.getText().toString();
+                searchText = URLEncoder.encode(text,"UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -112,4 +116,52 @@ public class SearchActivity extends Activity{
             getJson();
         }
     };
+
+    View.OnClickListener backToMain = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            finish();
+        }
+    };
+
+    public void topick(View view){
+        switch (view.getId()){
+            case R.id.bt1:
+                pickToIntent("减肥");
+                break;
+            case R.id.bt2:
+                pickToIntent("新疆菜");
+                break;
+            case R.id.bt3:
+                pickToIntent("宵夜");
+                break;
+            case R.id.bt4:
+                pickToIntent("西餐");
+                break;
+            case R.id.bt5:
+                pickToIntent("水果");
+                break;
+            case R.id.bt6:
+                pickToIntent("美容");
+                break;
+            case R.id.bt7:
+                pickToIntent("早餐");
+                break;
+            case R.id.bt8:
+                pickToIntent("烤箱");
+                break;
+            case R.id.bt9:
+                pickToIntent("海鲜");
+                break;
+        }
+    }
+    private void pickToIntent(String text){
+        try {
+            searchText = URLEncoder.encode(text,"UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        runningTime.runningTimeProgressDialog(SearchActivity.this);
+        getJson();
+    }
 }

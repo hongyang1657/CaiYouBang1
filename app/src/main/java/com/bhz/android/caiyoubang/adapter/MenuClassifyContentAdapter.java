@@ -20,21 +20,21 @@ public class MenuClassifyContentAdapter extends BaseAdapter{
     String[] MenuNameList;
     String[] MenuIdList;//菜谱id列表
 
-    public MenuClassifyContentAdapter(Context context) {
-        inflater = LayoutInflater.from(context);
+    public MenuClassifyContentAdapter(Context context, String[] MenuNameList,String[] MenuIdList) {
         this.context = context;
-        //this.MenuNameList = menuNameList;
-        //this.MenuIdList = menuIdList;
+        inflater = LayoutInflater.from(context);
+        this.MenuNameList = MenuNameList;
+        this.MenuIdList = MenuIdList;
     }
 
     @Override
     public int getCount() {
-        return MenuNameList==null?10:MenuNameList.length;
+        return MenuNameList==null?0:MenuNameList.length;
     }
 
     @Override
     public Object getItem(int position) {
-        return MenuNameList==null?"2":MenuNameList[position];
+        return MenuNameList[position];
     }
 
     @Override
@@ -60,19 +60,6 @@ public class MenuClassifyContentAdapter extends BaseAdapter{
             holder.textView.setText(MenuNameList[position]);
         }
         return convertView;
-    }
-
-    public void dataChange(String[] menuNameList,String[] menuIdList,int listLength){
-        if (listLength==0){
-            MenuNameList = new String[10];
-            MenuIdList = new String[10];
-        }else{
-            MenuNameList = new String[listLength];
-            MenuIdList = new String[listLength];
-        }
-        MenuNameList = menuNameList;
-        MenuIdList = menuIdList;
-        notifyDataSetChanged();
     }
 
     private class ViewHolder{

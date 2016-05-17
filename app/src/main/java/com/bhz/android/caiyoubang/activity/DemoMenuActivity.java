@@ -4,9 +4,12 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bhz.android.caiyoubang.R;
@@ -38,6 +41,8 @@ public class DemoMenuActivity extends Activity{
     int menuId;
     String searchText;
     ListView listView;
+    TextView tvTitle;
+    ImageView imgBack;
     MenuDemoAdapter adapter;
 
     String MenuName;
@@ -48,6 +53,7 @@ public class DemoMenuActivity extends Activity{
     int CDKEY;//识别码，识别是从哪个activity跳转过来的
     Intent intent;
     String url;
+    String title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +63,10 @@ public class DemoMenuActivity extends Activity{
         init();
     }
     public void init(){
+        tvTitle = (TextView) findViewById(R.id.tv_title);
+        tvTitle.setText(title);
+        imgBack = (ImageView) findViewById(R.id.iv_back1);
+        imgBack.setOnClickListener(backListener);
         listView = (ListView) findViewById(R.id.list_demo);
         adapter = new MenuDemoAdapter(this,nameList,imageUrlList,ingredientsList);
         listView.setAdapter(adapter);
@@ -70,6 +80,8 @@ public class DemoMenuActivity extends Activity{
         menuId = intent.getIntExtra("menuId",1);//得到菜谱url的id值
         searchText = intent.getStringExtra("searchText");
         CDKEY = intent.getIntExtra("CDKEY",100);//识别
+        title = intent.getStringExtra("title");
+        Log.i("result", "getIntentInfo: ---------"+title);
     }
 
     //设置item点击，展示菜单详情
@@ -136,4 +148,10 @@ public class DemoMenuActivity extends Activity{
             }
         });
     }
+    View.OnClickListener backListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            finish();
+        }
+    };
 }

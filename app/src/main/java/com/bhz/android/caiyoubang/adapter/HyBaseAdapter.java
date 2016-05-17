@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,11 +43,14 @@ public class HyBaseAdapter extends BaseAdapter{
     Context context;
     List<CreateMenuStepInfo> list;
     LayoutInflater inflater;
-    ViewHolder holder = null;
+    CreateMenuActivity activity;
     String[] contentList;
+    Uri stepImageUri;
 
 
-    public HyBaseAdapter(Context context,List<CreateMenuStepInfo> list) {
+    public HyBaseAdapter(CreateMenuActivity activity,Context context,List<CreateMenuStepInfo> list,Uri stepImageUri) {
+        this.stepImageUri = stepImageUri;
+        this.activity = activity;
         this.context = context;
         this.list = list;
         inflater = LayoutInflater.from(context);
@@ -69,6 +73,7 @@ public class HyBaseAdapter extends BaseAdapter{
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
         if (convertView==null){
             holder = new ViewHolder();
             convertView = inflater.inflate(R.layout.step_layout,null);
@@ -82,12 +87,25 @@ public class HyBaseAdapter extends BaseAdapter{
         i = position+1;
         holder.tvStepNumber.setText(""+i);//设置步骤数目
         contentList = new String[i];
-        contentList[position] = holder.etStepContent.getText().toString();
+        contentList[position] = holder.etStepContent.getText().toString();//----------------需要入库
         holder.imageStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(context, "",Toast.LENGTH_SHORT).show();
+                File fileImage = new File(Environment.getExternalStorageDirectory(),"stepImage.jpg");
+                try {
+                    if (fileImage.exists()){
+                        fileImage.delete();
+                    }
+                    fileImage.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                stepImageUri = Uri.fromFile(fileImage);
+                //跳转相机
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT,stepImageUri);
+                activity.startActivityForResult(intent,10);
 
             }
         });

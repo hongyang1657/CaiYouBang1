@@ -9,10 +9,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 
 
+import com.bhz.android.caiyoubang.activity.CreateMenuActivity;
 import com.bhz.android.caiyoubang.activity.GuideActivity;
 import com.bhz.android.caiyoubang.fragment.DiscoveryFragment;
 import com.bhz.android.caiyoubang.fragment.HomeFragment;
@@ -30,6 +33,7 @@ public class MainActivity extends Activity{//利用借口实现和fragment的数
     //判断是否第一次进入程序以及是否打开引导页
     SharedPreferences sp;
     MyFragment myfragment;
+    ImageView iv_sendMenu;
 
 
 
@@ -61,6 +65,8 @@ public class MainActivity extends Activity{//利用借口实现和fragment的数
     }
 
     private void inti() {
+        iv_sendMenu = (ImageView) findViewById(R.id.iv_send_menu);
+        iv_sendMenu.setOnClickListener(toSendMenu);
         fragmentManager = getFragmentManager();
         setDefaultFragment();
         group_mainpage = (RadioGroup) findViewById(R.id.mainpage_menu_group);
@@ -130,5 +136,12 @@ public class MainActivity extends Activity{//利用借口实现和fragment的数
         }
     }
 
+    View.OnClickListener toSendMenu = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(MainActivity.this, CreateMenuActivity.class);
+            startActivity(intent);
+        }
+    };
 
 }
