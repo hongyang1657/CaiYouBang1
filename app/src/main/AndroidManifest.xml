@@ -8,21 +8,71 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:icon="@mipmap/shiliao"
+        android:label="食聊"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity android:name=".MainActivity" >
 
-        </activity>
-        <activity android:name=".activity.CreateMenuActivity">
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.TestActivity"></activity>
+        <activity android:name=".activity.EventForMoreActivity"/>
+        <activity android:name=".activity.GuideActivity">
+        </activity>
+        <activity android:name=".activity.CreateMenuActivity">
+
+        </activity>
         <activity android:name=".activity.MenuActivity">
+
+        </activity>
+        <activity android:name=".activity.DemoMenuActivity">
+
+        </activity>
+        <activity android:name=".activity.JsonMainMenuActivity">
+
+        </activity>
+        <activity android:name=".activity.SearchActivity">
+
+        </activity>
+        <activity android:name=".activity.ClassifyActivity">
+
+        </activity>
+        <!--手机验证码注册页面 -->
+        <activity android:name=".activity.UserPhoneRegisterActivity">
+
+
+        </activity>
+        <!-- 账号注册页面-->
+        <activity android:name=".activity.UserRegisterActivity">
+
+        </activity>
+        <!-- 个人资料编辑-->
+        <activity android:name=".activity.UserEditDataActivity">
+
+        </activity>
+        <!-- 登录页面-->
+        <activity android:name=".activity.UserLoginPageActivity">
+
+        </activity>
+        <!-- 个人设置界面-->
+        <activity android:name=".activity.UserSetActivity">
+
+        </activity>
+        <!--个人私信-->
+        <activity android:name=".activity.UserPrivateLetterClass">
+
+        </activity>
+        <!--主页热搜-->
+        <activity android:name=".activity.HomeHotFind">
+
+        </activity>
+        <!--我的页面-->
+        <activity android:name=".activity.UserMyActivity">
 
         </activity>
     </application>

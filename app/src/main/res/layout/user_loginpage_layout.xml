@@ -65,12 +65,13 @@
             android:layout_margin="30dp"
             android:id="@+id/btn_user_login"/>
         <TextView
+            android:id="@+id/tv_user_login_forget"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="忘记密码？"
             android:textSize="15sp"
-            android:layout_below="@+id/btn_user_login"
-            android:layout_alignRight="@+id/btn_user_login"/>
+            android:layout_below="@id/btn_user_login"
+            android:layout_alignRight="@id/btn_user_login"/>
     </RelativeLayout>
 
     <TextView
