@@ -20,7 +20,7 @@
         <RadioGroup
             android:id="@+id/mainpage_menu_group"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:background="#FF9D6F"
             android:orientation="horizontal">
             <TextView
